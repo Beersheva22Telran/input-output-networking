@@ -23,6 +23,7 @@ abstract public class Copy {
 	public void copyRun() {
 		try {
 			canOverwrite();
+			sourceExists();
 			Instant timestamp = Instant.now();
 			long size = copy();
 			ChronoUnit unit = ChronoUnit.MILLIS;
@@ -33,6 +34,13 @@ abstract public class Copy {
 			System.out.println(e.getMessage());
 		}
 	}
+	private void sourceExists() throws Exception {
+		if(!Files.exists(Path.of(srcFilePath))) {
+			throw new Exception(srcFilePath + " not found");
+		}
+		
+	}
+
 	private void canOverwrite() throws Exception  {
 		if (!overwrite && Files.exists(Path.of(destFilePath))) {
 			throw new Exception(destFilePath + " cannot be overwritten");

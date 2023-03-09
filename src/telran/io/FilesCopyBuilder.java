@@ -16,13 +16,13 @@ public class FilesCopyBuilder {
 		boolean overwrite = getOverwriteValue(args);
 		
 		
-		switch (type) {
-			case FILES_COPY: return new FilesCopy(srcFilePath, destFilePath, overwrite); 
-			case TRANSFER_COPY: return new TransferCopy(srcFilePath, destFilePath, overwrite);
-			case BUFFER_COPY: return new BufferCopy(srcFilePath, destFilePath, overwrite,
+		return switch (type) {
+			case FILES_COPY -> new FilesCopy(srcFilePath, destFilePath, overwrite); 
+			case TRANSFER_COPY -> new TransferCopy(srcFilePath, destFilePath, overwrite);
+			case BUFFER_COPY ->new BufferCopy(srcFilePath, destFilePath, overwrite,
 					getBufferSizeValue(args));
-			default: throw new IllegalArgumentException(type + " is not supported copying implementation");
-		}
+			default -> throw new IllegalArgumentException(type + " is not supported copying implementation");
+		};
 	}
 
 	private int getBufferSizeValue(String[] args) {
