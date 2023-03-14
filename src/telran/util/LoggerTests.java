@@ -18,9 +18,7 @@ BufferedReader reader;
 @BeforeEach
 void setUp() throws FileNotFoundException {
 	File file = new File(LOGGER_FILE);
-	if (file.exists()) {
-		file.delete();
-	}
+	
 	handler = new SimpleStreamHandler(new PrintStream(file));
 	logger = new Logger(handler, "test-logger");
 	reader = new BufferedReader(new FileReader(file));
