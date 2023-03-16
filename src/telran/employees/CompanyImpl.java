@@ -41,11 +41,13 @@ public class CompanyImpl implements Company {
 		Employee empl = employees.remove(id); 
 		if (empl != null) {
 			removeIndexMap(employeesMonth, empl.getBirthDate().getMonthValue(), empl);
+			removeIndexMap(employeesDepartment, empl.getDepartment(), empl);
+			removeIndexMap(employeesSalary, empl.getSalary(), empl);
 		}
 		return empl;
 	}
 
-	private <T>void removeIndexMap(HashMap<T, Set<Employee>> map, T key, Employee empl) {
+	private <T>void removeIndexMap(Map<T, Set<Employee>> map, T key, Employee empl) {
 		Set<Employee> set = map.get(key);
 		set.remove(empl);
 		if (set.isEmpty()) {
