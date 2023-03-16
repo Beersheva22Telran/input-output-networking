@@ -1,70 +1,111 @@
 package telran.employees;
 
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
+import java.io.*;
 
 public class CompanyImpl implements Company {
 
 	
 	private static final long serialVersionUID = 1L;
-
+	private HashMap<Long, Employee> employees = new HashMap<>();
+	private HashMap<Integer, Set<Employee>> employeesMonth = new HashMap<>();
+	private HashMap<String, Set<Employee>> employeesDepartment = new HashMap<>();
+	private TreeMap<Integer, Set<Employee>> employeesSalary = new TreeMap<>();
+	
 	@Override
 	public Iterator<Employee> iterator() {
-		// TODO Auto-generated method stub
-		return null;
+		
+		return getAllEmployees().iterator();
 	}
 
 	@Override
 	public boolean addEmployee(Employee empl) {
-		// TODO Auto-generated method stub
-		return false;
+		boolean res = false;
+		if (employees.putIfAbsent(empl.id, empl) == null) {
+			res = true;
+			addIndexMap(employeesMonth, empl.getBirthDate().getMonthValue(), empl);
+			addIndexMap(employeesDepartment, empl.getDepartment(), empl);
+			addIndexMap(employeesSalary, empl.getSalary(), empl);
+		}
+		
+		return res;
+	}
+
+	private <T> void addIndexMap(Map<T, Set<Employee>> map, T key, Employee empl) {
+		map.computeIfAbsent(key, k->new HashSet<>()).add(empl);
+		
 	}
 
 	@Override
 	public Employee removeEmployee(long id) {
-		// TODO Auto-generated method stub
-		return null;
+		Employee empl = employees.remove(id); 
+		if (empl != null) {
+			removeIndexMap(employeesMonth, empl.getBirthDate().getMonthValue(), empl);
+		}
+		return empl;
+	}
+
+	private <T>void removeIndexMap(HashMap<T, Set<Employee>> map, T key, Employee empl) {
+		Set<Employee> set = map.get(key);
+		set.remove(empl);
+		if (set.isEmpty()) {
+			map.remove(key);
+		}
+		
 	}
 
 	@Override
 	public List<Employee> getAllEmployees() {
-		// TODO Auto-generated method stub
-		return null;
+		
+		return new ArrayList<>(employees.values());
 	}
 
 	@Override
 	public List<Employee> getEmployeesByMonthBirth(int month) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		return new ArrayList<>(employeesMonth.getOrDefault(month, Collections.emptySet()));
 	}
 
 	@Override
 	public List<Employee> getEmployeesBySalary(int salaryFrom, int salaryTo) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		return employeesSalary.subMap(salaryFrom, true, salaryTo, true)
+				.values().stream().flatMap(Set::stream).toList();
 	}
 
 	@Override
 	public List<Employee> getEmployeesByDepartment(String department) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		return new ArrayList<>(employeesDepartment.getOrDefault(department, Collections.emptySet()));
 	}
 
 	@Override
 	public Employee getEmployee(long id) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		return employees.get(id);
 	}
 
 	@Override
 	public void save(String pathName) {
-		// TODO Auto-generated method stub
+		try (ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream(pathName))){
+			output.writeObject(getAllEmployees());
+		} catch(Exception e) {
+			throw new RuntimeException(e.toString()); //some error
+		}
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void restore(String pathName) {
-		// TODO Auto-generated method stub
+		try (ObjectInputStream input = new ObjectInputStream(new FileInputStream(pathName))) {
+			List<Employee> allEmployees = (List<Employee>) input.readObject();
+			allEmployees.forEach(this::addEmployee);
+		}catch(FileNotFoundException e) {
+			//empty object but no error
+		} catch (Exception e) {
+			throw new RuntimeException(e.toString()); //some error
+		}
 
 	}
 
