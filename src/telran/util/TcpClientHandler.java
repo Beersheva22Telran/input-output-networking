@@ -4,6 +4,8 @@ import java.net.*;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
+import telran.net.application.ServerLogAppl;
+
 
 public class TcpClientHandler implements Handler {
 	private static final String LOG_TYPE_REQUEST = "log";
@@ -30,10 +32,10 @@ public class TcpClientHandler implements Handler {
 				ZoneId.of(loggerRecord.zoneId));
 		String message = String.format("%s %s %s %s", ldt, loggerRecord.level,
 				loggerRecord.loggerName, loggerRecord.message);
-		stream.println(LOG_TYPE_REQUEST + "#" + message);
+		stream.println(ServerLogAppl.LOG_TYPE + "#" + message);
 		try {
 			String response = input.readLine();
-			if (!response.equals(OK)) {
+			if (!response.equals(ServerLogAppl.OK)) {
 				throw new RuntimeException("Response from Logger Server is " + response);
 			}
 		} catch (IOException e) {

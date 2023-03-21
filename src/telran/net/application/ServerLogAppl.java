@@ -66,7 +66,7 @@ private static final String WRONG_LEVEL = "Wrong Level in logger record";
 		String res = WRONG_LEVEL;
 		if (level != null) {
 			res = OK;
-			logCounters.merge(level.toString(), 1, (a,b) -> a + b);
+			logCounters.merge(level.toString(), 1, Integer::sum);
 		}
 		return res;
 	}
