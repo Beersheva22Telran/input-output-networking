@@ -17,10 +17,22 @@ public TcpClient(String hostname, int port) throws Exception{
 		socket.close();
 
 	}
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T send(String type, Serializable requestData) {
-		// TODO Auto-generated method stub
-		return null;
+		Request request = new Request(type, requestData);
+		T res = null;
+		try {
+			output.writeObject(request);
+			Response response = (Response) input.readObject();
+			if(response.code != ResponseCode.OK) {
+				throw new Exception(response.data.toString());
+			}
+			res = (T) response.data;
+		} catch (Exception e) {
+			throw new RuntimeException(e.getMessage());
+		}
+		return res;
 	}
 	
 

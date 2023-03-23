@@ -15,15 +15,18 @@ public TcpServerClient(Socket socket, Protocol protocol) throws IOException {
 }
 	@Override
 	public void run() {
-		while(true) {
+		boolean running = true;
+		while(running) {
 			try {
 				Request request = (Request) input.readObject();
 				Response response = protocol.getResponse(request);
 				output.writeObject(response);
 			} catch (EOFException e) {
 				System.out.println("client closed connection");
+				running = false;
 			} catch (Exception e)  {
 				throw new RuntimeException(e.toString());
+				
 			}
 		}
 		
