@@ -2,7 +2,7 @@ package telran.net;
 import java.net.*;
 import static telran.net.UdpUtills.*;
 public class UdpServer implements Runnable {
-private static final int MAX_BUFFER_LENGTH = 100000;
+
 private DatagramSocket socket;
 private int port;
 private Protocol protocol;

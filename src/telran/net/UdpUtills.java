@@ -3,6 +3,7 @@ package telran.net;
 import java.io.*;
 
 public class UdpUtills {
+	public static final int MAX_BUFFER_LENGTH = 100000;
      public static byte[] toBytesArray(Serializable obj) throws Exception{
     	 try (ByteArrayOutputStream bytesOutput = new ByteArrayOutputStream();
     			 ObjectOutputStream objectOutput = new ObjectOutputStream(bytesOutput)) {
