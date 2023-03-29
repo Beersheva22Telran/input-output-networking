@@ -45,7 +45,7 @@ default String readStringOptions(String prompt, String errorPrompt,
 }
 default int readInt(String prompt, String errorPrompt) {
 	
-	return readObject(prompt, errorPrompt, Integer::parseInt);
+	return readInt(prompt, errorPrompt, Integer.MIN_VALUE, Integer.MAX_VALUE);
 }
 default int readInt(String prompt, String errorPrompt, int min, int max) {
 	
@@ -84,11 +84,10 @@ default long readLong(String prompt, String errorPrompt, long min, long max) {
 }
 default LocalDate readDateISO(String prompt, String errorPrompt) {
 	
-	return readObject(prompt, errorPrompt, LocalDate::parse);
+	return readDate(prompt, errorPrompt, "YYYY-MM-DD", LocalDate.MIN, LocalDate.MAX);
 }
 default LocalDate readDate(String prompt, String errorPrompt, String format,
 		LocalDate min, LocalDate max) {
-	
 	return readObject(prompt, errorPrompt, s -> {
 		DateTimeFormatter dtf = null;
 		try {
@@ -96,7 +95,12 @@ default LocalDate readDate(String prompt, String errorPrompt, String format,
 		} catch (Exception e) {
 			throw new RuntimeException("Wrong date format " + format);
 		}
-		LocalDate res = LocalDate.parse(s, dtf);
+		LocalDate res = null;
+		 try {
+			res = LocalDate.parse(s, dtf);
+		} catch (Exception e) {
+			throw new RuntimeException("must be date in format " + format);
+		}
 		if (res.isBefore(min)) {
 			throw new RuntimeException("must not be before " + min.format(dtf));
 		}
