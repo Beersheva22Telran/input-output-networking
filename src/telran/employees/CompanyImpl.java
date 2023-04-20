@@ -111,4 +111,16 @@ public class CompanyImpl implements Company {
 
 	}
 
+	@Override
+	public void updateSalary(long emplId, int newSalary) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void updateDepartment(long emplId, String department) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
